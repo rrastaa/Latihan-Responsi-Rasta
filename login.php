@@ -6,18 +6,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['name'];
     $password = $_POST['pass'];
 
-    $stmt=mysqli_prepare($conn,"SELECT * FROM users WHERE username = ?");
-    $stmt->bind_param("s",$username);
-    $user=$stmt->execute();
-    $user=$stmt->get_result();
-    if ($user->num_rows>0) {
-        $user=$user->fetch_assoc();
-        if (password_verify($password,$user['password'])) {
-            $_SESSION['username']=$user['username'];
+    $stmt = mysqli_prepare($conn, "SELECT * FROM users WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $user = $stmt->execute();
+    $user = $stmt->get_result();
+    if ($user->num_rows > 0) {
+        $user = $user->fetch_assoc();
+        if (password_verify($password, $user['password'])) {
+            $_SESSION['username'] = $user['username'];
             header('location: dashboard.php');
         }
-    }
-    else {
+    } else {
         header('location: login.php?err=salah');
     }
 }
@@ -101,6 +100,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <label for="pass">Password</label><br>
                     <input type="password" name="pass" id="pass" placeholder="Password" required>
                 </div>
+                <?php
+                if ($_GET['err'] == 'salah') {
+                    echo '
+                            <div class="alert alert-danger" role="alert">
+                                Incorrect Password
+                            </div>';
+                } elseif ($_GET['err'] == 'loginfirst') {
+                    echo '
+                            <div class="alert alert-danger" role="alert">
+                                You Have Not Logged In :(
+                            </div>';
+                }
+                ?>
                 <button type="submit">
                     Login
                 </button>
